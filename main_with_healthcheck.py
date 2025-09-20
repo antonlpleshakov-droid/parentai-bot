@@ -5,7 +5,6 @@ Main entry point for ParentAI Telegram Bot with health check for Railway
 import os
 import sys
 import asyncio
-import threading
 from aiohttp import web
 from config import TELEGRAM_BOT_TOKEN, OPENAI_API_KEY
 
@@ -27,16 +26,22 @@ async def health_check(request):
     """Health check endpoint for Railway."""
     return web.Response(text="ParentAI Bot is running! 🤖", status=200)
 
-def start_telegram_bot():
-    """Start the Telegram bot in a separate thread."""
+async def start_bot():
+    """Start the Telegram bot."""
     try:
         from telegram_bot import ParentAIBot
         bot = ParentAIBot()
         print("✅ Bot initialized successfully!")
         print("🚀 Starting bot polling...")
-        bot.run()
+        
+        # Start the bot in the background
+        asyncio.create_task(bot.application.run_polling())
+        
     except Exception as e:
         print(f"❌ Error starting bot: {e}")
+        return False
+    
+    return True
 
 async def init_app():
     """Initialize the web application with health check."""
@@ -45,7 +50,7 @@ async def init_app():
     app.router.add_get('/health', health_check)
     return app
 
-def main():
+async def main():
     """Main function to start both web server and bot."""
     print("🤖 Starting ParentAI Telegram Bot with health check...")
     
@@ -53,33 +58,30 @@ def main():
     if not check_environment():
         sys.exit(1)
     
-    # Start Telegram bot in a separate thread
-    bot_thread = threading.Thread(target=start_telegram_bot, daemon=True)
-    bot_thread.start()
+    # Start the bot
+    bot_started = await start_bot()
+    if not bot_started:
+        sys.exit(1)
     
     # Start web server for health checks
-    async def start_web_server():
-        app = await init_app()
-        runner = web.AppRunner(app)
-        await runner.setup()
-        
-        # Get port from Railway or use default
-        port = int(os.environ.get('PORT', 8000))
-        site = web.TCPSite(runner, '0.0.0.0', port)
-        await site.start()
-        
-        print(f"✅ Health check server running on port {port}")
-        print("🎉 ParentAI Bot is live and ready!")
-        
-        # Keep the application running
-        try:
-            await asyncio.Future()  # Run forever
-        except KeyboardInterrupt:
-            print("🛑 Shutting down...")
-            await runner.cleanup()
+    app = await init_app()
+    runner = web.AppRunner(app)
+    await runner.setup()
     
-    # Run the web server
-    asyncio.run(start_web_server())
+    # Get port from Railway or use default
+    port = int(os.environ.get('PORT', 8000))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    
+    print(f"✅ Health check server running on port {port}")
+    print("🎉 ParentAI Bot is live and ready!")
+    
+    # Keep the application running
+    try:
+        await asyncio.Future()  # Run forever
+    except KeyboardInterrupt:
+        print("🛑 Shutting down...")
+        await runner.cleanup()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
