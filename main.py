@@ -25,7 +25,7 @@ def check_environment():
 
 async def health_check(request):
     """Health check endpoint for Railway."""
-    return web.Response(text="ParentAI Bot is running! 🤖", status=200)
+    return web.Response(text="ParentAI Bot is running!", status=200)
 
 def start_telegram_bot():
     """Start the Telegram bot in a separate thread."""
