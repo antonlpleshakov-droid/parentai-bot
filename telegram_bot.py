@@ -51,24 +51,24 @@ class ParentAIBot:
         }
         
         welcome_message = f"""
-👋 Welcome to {BOT_NAME}!
+👋 Добро пожаловать в {BOT_NAME}!
 
-I'm your AI-powered parenting assistant, here to help you with questions about your child aged 0-3 years old.
+Я ваш помощник по воспитанию детей, основанный исключительно на книге Людмилы Петрановской "Тайная опора".
 
-I provide evidence-based advice based on professional literature and pediatric best practices.
+Я даю советы, основанные на теории привязанности и принципах, описанных в этой замечательной книге.
 
-To get started:
-1. Use /age to set your child's age
-2. Ask me any parenting question
-3. Use /topics to see common topics I can help with
+Чтобы начать:
+1. Используйте /age чтобы указать возраст вашего ребенка
+2. Задайте мне любой вопрос о воспитании
+3. Используйте /topics чтобы увидеть основные темы
 
-What would you like to know about your little one? 🤱
+Что бы вы хотели узнать о вашем малыше? 🤱
         """
         
         keyboard = [
-            [InlineKeyboardButton("Set Child's Age", callback_data="set_age")],
-            [InlineKeyboardButton("Common Topics", callback_data="show_topics")],
-            [InlineKeyboardButton("Quick Help", callback_data="quick_help")]
+            [InlineKeyboardButton("Указать возраст ребенка", callback_data="set_age")],
+            [InlineKeyboardButton("Основные темы", callback_data="show_topics")],
+            [InlineKeyboardButton("Быстрая помощь", callback_data="quick_help")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         

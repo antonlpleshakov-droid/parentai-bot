@@ -3,12 +3,12 @@ AI service for generating professional parenting advice based on knowledge base.
 """
 
 from config import OPENAI_API_KEY
-from knowledge_base import get_knowledge_for_age_group, get_all_topics
+from petranovskaya_knowledge_base import get_petranovskaya_advice, format_petranovskaya_response, get_all_petranovskaya_topics
 import json
 
 class ParentAIService:
     def __init__(self):
-        self.knowledge_base_topics = get_all_topics()
+        self.knowledge_base_topics = get_all_petranovskaya_topics()
     
     def determine_age_group(self, child_age_months):
         """Determine age group based on child's age in months."""
@@ -25,21 +25,24 @@ class ParentAIService:
         """Extract the main topic from user's question."""
         question_lower = question.lower()
         
-        # Map keywords to topics
+        # Map keywords to Петрановская's topics
         topic_keywords = {
-            "crying": ["cry", "crying", "fuss", "fussy", "upset", "scream", "screaming"],
-            "medical_checkups": ["doctor", "checkup", "visit", "medical", "vaccine", "vaccination", "appointment"],
-            "age_appropriate_activities": ["activity", "activities", "play", "playing", "games", "toys", "development"]
+            "crying_and_comfort": ["плач", "плачет", "кричит", "cry", "crying", "fuss", "fussy", "upset", "scream", "screaming"],
+            "sleep_issues": ["сон", "спит", "sleep", "спать", "засыпать", "просыпается"],
+            "discipline_and_boundaries": ["воспитание", "наказание", "границы", "discipline", "punishment", "boundaries", "истерика", "tantrum"],
+            "development_milestones": ["развитие", "развивается", "development", "milestone", "навыки", "skills"],
+            "parenting_philosophy": ["воспитание", "родительство", "parenting", "привязанность", "attachment"],
+            "attachment_theory": ["привязанность", "attachment", "любовь", "love", "близость", "closeness"]
         }
         
         for topic, keywords in topic_keywords.items():
             if any(keyword in question_lower for keyword in keywords):
                 return topic
         
-        return "general"
+        return "parenting_philosophy"  # Default to general parenting philosophy
     
     def generate_response(self, question, child_age_months=None, user_context=""):
-        """Generate AI response based on question and child's age."""
+        """Generate AI response based on Петрановская's book only."""
         try:
             # Determine age group
             age_group = self.determine_age_group(child_age_months) if child_age_months else "1-3_years"
@@ -47,19 +50,27 @@ class ParentAIService:
             # Extract topic
             topic = self.extract_topic_from_question(question)
             
-            # Get relevant knowledge
-            knowledge = get_knowledge_for_age_group(age_group, topic)
+            # Get Петрановская's advice
+            petranovskaya_advice = get_petranovskaya_advice(topic, age_group)
             
-            # Create context for AI
-            context = self._create_context(question, age_group, topic, knowledge, user_context)
+            if not petranovskaya_advice:
+                # Try without age group
+                petranovskaya_advice = get_petranovskaya_advice(topic)
             
-            # Generate response using OpenAI
-            response = self._call_openai(context, question)
-            
-            return response
+            if petranovskaya_advice:
+                # Use Петрановская's knowledge directly
+                return format_petranovskaya_response(topic, age_group)
+            else:
+                # Create context for AI based on Петрановская's principles
+                context = self._create_petranovskaya_context(question, age_group, topic, user_context)
+                
+                # Generate response using OpenAI with Петрановская's context
+                response = self._call_openai(context, question)
+                
+                return response
             
         except Exception as e:
-            return f"I apologize, but I'm having trouble processing your question right now. Please try again in a moment. Error: {str(e)}"
+            return f"Извините, у меня возникли проблемы с обработкой вашего вопроса. Попробуйте еще раз. Ошибка: {str(e)}"
     
     def _create_context(self, question, age_group, topic, knowledge, user_context):
         """Create context for AI based on knowledge base and user input."""
@@ -99,6 +110,52 @@ INSTRUCTIONS:
 USER QUESTION: {question}
 """
         
+        return context
+    
+    def _create_petranovskaya_context(self, question, age_group, topic, user_context):
+        """Create context for AI based on Петрановская's book only."""
+        context = f"""
+Вы - ParentAI, помощник по воспитанию детей, основанный исключительно на книге Людмилы Петрановской "Тайная опора".
+
+ВОЗРАСТНАЯ ГРУППА: {age_group}
+ТЕМА: {topic}
+КОНТЕКСТ ПОЛЬЗОВАТЕЛЯ: {user_context}
+
+ОСНОВЫ ИЗ КНИГИ "ТАЙНАЯ ОПОРА":
+
+1. ТЕОРИЯ ПРИВЯЗАННОСТИ:
+- Привязанность - это биологическая потребность ребенка, как еда и сон
+- Безопасная привязанность дает ребенку уверенность в мире
+- Привязанность формируется в первые годы жизни
+
+2. ОСНОВНЫЕ ПРИНЦИПЫ:
+- Ребенок - это личность, а не проект для воспитания
+- Любовь и принятие - основа всего
+- Доверие к ребенку и к себе
+- Гибкость важнее строгих правил
+
+3. ПОДХОД К ВОСПИТАНИЮ:
+- Границы нужны, но они должны быть с любовью
+- Ребенок проверяет границы, чтобы убедиться в прочности привязанности
+- Наказание должно быть справедливым и понятным
+- Никогда не наказывайте отказом в любви
+
+4. ЧАСТЫЕ ОШИБКИ:
+- Игнорирование плача "чтобы не избаловать"
+- Попытки "воспитать" через наказания
+- Сравнение с другими детьми
+- Фокус на поведении, а не на отношениях
+
+ИНСТРУКЦИИ:
+1. Отвечайте ТОЛЬКО на основе принципов из книги "Тайная опора"
+2. Если в книге нет информации по вопросу, честно скажите об этом
+3. Всегда упоминайте, что совет основан на книге Петрановской
+4. Используйте теплый, понимающий тон
+5. Фокусируйтесь на отношениях, а не на поведении
+6. Подчеркивайте важность привязанности и любви
+
+ВОПРОС ПОЛЬЗОВАТЕЛЯ: {question}
+"""
         return context
     
     def _call_openai(self, context, question):

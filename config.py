@@ -9,7 +9,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 # Bot Configuration
 BOT_NAME = "ParentAI"
-BOT_DESCRIPTION = "Your AI assistant for parenting questions about children 0-3 years old"
+BOT_DESCRIPTION = "Ваш помощник по воспитанию детей, основанный на книге Людмилы Петрановской 'Тайная опора'"
 
 # Knowledge base configuration
 KNOWLEDGE_BASE_PATH = "knowledge_base/"
