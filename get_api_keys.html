@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParentAI Bot - Get API Keys</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #4CAF50;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .button {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 ParentAI Bot - Get API Keys</h1>
+        
+        <div class="step">
+            <h3>Step 1: Get Telegram Bot Token</h3>
+            <p>1. Click the button below to open Telegram</p>
+            <a href="https://t.me/botfather" class="button" target="_blank">Open @BotFather</a>
+            <p>2. Send this command: <span class="code">/newbot</span></p>
+            <p>3. Follow the instructions:</p>
+            <ul>
+                <li>Bot name: <strong>ParentAI Bot</strong></li>
+                <li>Username: <strong>your_parentai_bot</strong> (must be unique)</li>
+            </ul>
+            <p>4. Copy the token (looks like: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz)</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Get OpenAI API Key</h3>
+            <p>1. Click the button below to open OpenAI</p>
+            <a href="https://platform.openai.com" class="button" target="_blank">Open OpenAI Platform</a>
+            <p>2. Sign up or log in</p>
+            <p>3. Go to API Keys section</p>
+            <p>4. Click "Create new secret key"</p>
+            <p>5. Copy the key (starts with sk-)</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Deploy to Railway</h3>
+            <p>1. Click the button below to open Railway</p>
+            <a href="https://railway.app" class="button" target="_blank">Open Railway</a>
+            <p>2. Sign up with GitHub</p>
+            <p>3. Click "New Project" → "Deploy from GitHub repo"</p>
+            <p>4. Create new repository and upload your files</p>
+            <p>5. Add environment variables:</p>
+            <div class="code">
+                TELEGRAM_BOT_TOKEN = your_bot_token_here<br>
+                OPENAI_API_KEY = your_openai_key_here
+            </div>
+            <p>6. Click "Deploy"</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Keep your API keys secure! Never share them publicly.
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Test Your Bot</h3>
+            <p>1. Find your bot on Telegram (search for the username you created)</p>
+            <p>2. Send <span class="code">/start</span></p>
+            <p>3. Test with: "My baby is crying, what should I do?"</p>
+            <p>4. Set your child's age with <span class="code">/age</span></p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <h2>🎉 Your AI-powered parenting assistant will be live in 2 minutes!</h2>
+        </div>
+    </div>
+</body>
+</html>
