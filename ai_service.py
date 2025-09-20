@@ -2,13 +2,9 @@
 AI service for generating professional parenting advice based on knowledge base.
 """
 
-import openai
 from config import OPENAI_API_KEY
 from knowledge_base import get_knowledge_for_age_group, get_all_topics
 import json
-
-# Initialize OpenAI
-openai.api_key = OPENAI_API_KEY
 
 class ParentAIService:
     def __init__(self):
@@ -108,7 +104,10 @@ USER QUESTION: {question}
     def _call_openai(self, context, question):
         """Call OpenAI API to generate response."""
         try:
-            response = openai.ChatCompletion.create(
+            from openai import OpenAI
+            client = OpenAI(api_key=OPENAI_API_KEY)
+            
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": context},
