@@ -25,18 +25,27 @@ def check_environment():
 
 async def health_check(request):
     """Health check endpoint for Railway."""
-    return web.Response(text="ParentAI Bot is running!", status=200)
+    return web.Response(text="Enhanced ParentAI Bot is running!", status=200)
 
 def start_telegram_bot():
     """Start the Telegram bot in a separate thread."""
     try:
-        from telegram_bot import ParentAIBot
-        bot = ParentAIBot()
-        print("✅ Bot initialized successfully!")
-        print("🚀 Starting bot polling...")
+        from enhanced_telegram_bot import EnhancedParentAIBot
+        bot = EnhancedParentAIBot()
+        print("✅ Enhanced bot initialized successfully!")
+        print("🚀 Starting enhanced bot polling...")
         bot.run()
     except Exception as e:
-        print(f"❌ Error starting bot: {e}")
+        print(f"❌ Error starting enhanced bot: {e}")
+        print("Falling back to basic bot...")
+        try:
+            from telegram_bot import ParentAIBot
+            bot = ParentAIBot()
+            print("✅ Basic bot initialized successfully!")
+            print("🚀 Starting basic bot polling...")
+            bot.run()
+        except Exception as e2:
+            print(f"❌ Error starting basic bot: {e2}")
 
 async def init_app():
     """Initialize the web application with health check."""
@@ -47,7 +56,7 @@ async def init_app():
 
 def main():
     """Main function to start both web server and bot."""
-    print("🤖 Starting ParentAI Telegram Bot with health check...")
+    print("🤖 Starting Enhanced ParentAI Telegram Bot with health check...")
     
     # Check environment
     if not check_environment():
